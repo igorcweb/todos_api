@@ -1,0 +1,13 @@
+# dependencies
+/node_modules
+
+# misc
+.DS_Store
+
+/dist
+
+# dotenv environment variables file
+.env
+
+# automatically generated css file
+public/css/main.css
