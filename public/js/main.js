@@ -1,19 +1,21 @@
-/* global $ */
-$(document).ready(function () {
+$(document).ready(() => {
   $.getJSON("/api/todos")
-    .then(addTodos)
-
-  $('#todoInput').keypress(function (event) {
-    if (event.which == 13) {
+  .then(addTodos)
+  .catch((err) => {
+    console.log(err);
+  });
+  
+  $('#todoInput').keypress((event) => {
+    if(event.which == 13) {
       createTodo();
     }
   });
-
-  $('.list').on('click', 'li', function () {
+  
+  $('.list').on('click', 'li', function(){
     updateTodo($(this));
   })
-
-  $('.list').on('click', 'span', function (e) {
+  
+  $('.list').on('click', 'span', function(e){
     e.stopPropagation();
     removeTodo($(this).parent());
   })
@@ -21,60 +23,60 @@ $(document).ready(function () {
 
 function addTodos(todos) {
   //add todos to page here
-  todos.forEach(function (todo) {
+  todos.forEach((todo) => {
     addTodo(todo);
   });
 }
 
-function addTodo(todo) {
-  var newTodo = $('<li class="task">' + todo.name + ' <span>X</span></li>');
+function addTodo(todo){
+  const newTodo = $(`<li class="task">${todo.name}<span>X</span></li>`);
   newTodo.data('id', todo._id);
   newTodo.data('completed', todo.completed);
-  if (todo.completed) {
+  if(todo.completed){
     newTodo.addClass("done");
   }
   $('.list').append(newTodo);
 }
 
-function createTodo() {
+function createTodo(){
   //send request to create new todo
-  var usrInput = $('#todoInput').val();
-  $.post('/api/todos', { name: usrInput })
-    .then(function (newTodo) {
-      $('#todoInput').val('');
-      addTodo(newTodo);
-    })
-    .catch(function (err) {
-      console.log(err);
-    })
+  const usrInput = $('#todoInput').val();
+  $.post('/api/todos',{name: usrInput})
+  .then(function(newTodo){
+    $('#todoInput').val('');
+    addTodo(newTodo);
+  })
+  .catch(function(err){
+    console.log(err);
+  })
 }
 
-function removeTodo(todo) {
+function removeTodo(todo){
   var clickedId = todo.data('id');
-  var deleteUrl = '/api/todos/' + clickedId;
+  var deleteUrl = '/api/todos/' + clickedId; 
   $.ajax({
     method: 'DELETE',
     url: deleteUrl
   })
-    .then(function (data) {
-      todo.remove();
-    })
-    .catch(function (err) {
-      console.log(err);
-    })
+  .then(function(data){
+    todo.remove();
+  })
+  .catch(function(err){
+    console.log(err);
+  })
 }
 
-function updateTodo(todo) {
+function updateTodo(todo){
   var updateUrl = '/api/todos/' + todo.data('id');
   var isDone = !todo.data('completed');
-  var updateData = { completed: isDone }
+  var updateData = {completed: isDone}
   $.ajax({
     method: 'PUT',
     url: updateUrl,
     data: updateData
   })
-    .then(function (updatedTodo) {
-      todo.toggleClass("done");
-      todo.data('completed', isDone);
-    })
+  .then(function(updatedTodo){
+    todo.toggleClass("done");
+    todo.data('completed', isDone);
+  })
 }
